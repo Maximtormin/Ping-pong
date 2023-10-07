@@ -33,11 +33,19 @@ class Player(GameSprite):
             self.rect.y -= self.speed
         if keys[K_DOWN] and self.rect.y < win_height - 80:
             self.rect.y += self.speed
-    
 
-player1 = Player('racket.png', 5, 100,  10, 65, 65)
-player2 = Player('racket.png', 320, 100,  10, 65, 65)
-ball = GameSprite('ball.jpg', 170, 500, 5, 60,60)
+speed_x = 1
+speed_y = 1
+finish = False
+
+font.init()
+font1 = font.Font(None, 35)
+lose1 = font1.render('ТЫ 1 ПРОИГРАЛ!', True, (180,0,0))
+lose2 = font1.render('ТЫ 2 ПРОИГРАЛ!', True, (180,0,0))
+
+player1 = Player('rack.png', 3, 250,  8, 100, 100)
+player2 = Player('rack.png', 298, 250,  8, 100, 100)
+ball = GameSprite('ball.png', 170, 250, 5, 40,40)
 FPS = 60 
 clock = time.Clock()
 run = True
@@ -46,8 +54,29 @@ while run:
     for e in event.get():
         if e.type == QUIT:
             run = False
-        
     window.blit(background,(0,0))
+    if finish != True:
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+
+    if sprite.collide_rect(player1,ball) or sprite.collide_rect(player2,ball):
+        speed_x *= -1
+
+    if ball.rect.y > win_height-50 or ball.rect.y <0:
+        speed_y *= -1
+
+
+    if ball.rect.x < 0:
+        finish = True
+        window.blit(lose1, (200,200))
+
+    if ball.rect.x > win_width-50:
+        finish = True
+        window.blit(lose2, (200,200))
+
+
+
+    
     player1.update_L()
     player2.update_R()
     player1.reset()
@@ -56,6 +85,9 @@ while run:
 
     display.update()
     clock.tick(FPS)
+
+
+
 
 
 
